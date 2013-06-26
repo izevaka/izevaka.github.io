@@ -1,0 +1,4 @@
+name: {(somethig||other).soft()}
+pygments: true
+safe: true
+lsi: false

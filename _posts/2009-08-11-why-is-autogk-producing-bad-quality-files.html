@@ -1,0 +1,29 @@
+---
+layout: post
+title: Why is AutoGK producing bad quality files?
+tags:
+- General
+- video
+- video-conversion
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  jd_tweet_this: 'yes'
+---
+I had this problem when trying to encode a TV Series disc. The file kept coming out looking real crap. I had a Homer Simpson moment after about five goes - what I thought was an episode actually was actually all episodes from the disc.
+
+So, simple answer - look at the duration of the output clip. It might be case of AutoGK bundling all vobs together, even though it showed you a list of chapters(or so I thought, they are actually "program chains") when you selected an IFO. It will do that by design as described in the FAQ:
+
+<a href="http://www.autogk.me.uk/modules.php?name=TutorialEN">http://www.autogk.me.uk/modules.php?name=TutorialEN</a>
+
+<blockquote>If you want to encode multiple input files into one resulting AVI you can do it by appropriately naming input files: *_1.vob;*_2.vob etc and selecting just the first one (Extension can be any of supported types apart from AVI). In IFO mode AutoGK automatically selects all VOBs that belong to one vobset.</blockquote>
+
+Another thing to note is that there is no 1 to 1 mapping between an individual VOB file and an episode. In order to rip the eps properly you will need to do extra mocking around like described here:
+
+<a href="http://download.videohelp.com/cheekie_moonkie/guides/ddtool.html">http://download.videohelp.com/cheekie_moonkie/guides/ddtool.html</a>
+
+I haven't tried the above tutorial as just yet, but I might give it a go later on.
+
+<strong>UPDATE:</strong> Tried the DVD Demux tool and it works quite well. Read the above guide and remember to turn on "Remux to one .VOB". This will make sure you have a VOB file with both video and sound. By default the sound is separated from the video and AutoGK does not pick it up.

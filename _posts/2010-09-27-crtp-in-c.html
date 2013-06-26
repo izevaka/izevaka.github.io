@@ -1,0 +1,65 @@
+---
+layout: post
+title: CRTP in C#
+tags:
+- csharp
+- Development
+status: publish
+type: post
+published: true
+meta:
+  _jd_tweet_this: ''
+  _wp_jd_clig: ''
+  _jd_twitter: ''
+  _wp_jd_bitly: http://bit.ly/bcWSso
+  _wp_jd_wp: ''
+  _wp_jd_yourls: ''
+  _wp_jd_url: ''
+  _wp_jd_target: ''
+  _jd_wp_twitter: ''
+  _jd_post_meta_fixed: 'true'
+  _edit_last: '1'
+  _syntaxhighlighter_encoded: '1'
+  _wp_old_slug: ''
+---
+C++ developers are well familiar with the [CRTP][1] - Curiously Recurring Template Pattern, where a class can derive from another class, specifying itself as a template parameter.
+
+Every now and then I wish this pattern can be used in C#. If you attempt to implement it C++ style, you would get a compile error:
+
+<div>
+[code lang="csharp"]
+	public abstract class Base&lt;T&gt; {
+		public T FluentMethod() {
+			return (T)(this); //error CS0030: Cannot convert type 'InheritanceTest.Base&lt;T&gt;' to 'T'
+		}
+	}
+
+	public class Derived : Base&lt;Derived&gt; {
+	}
+[/code]
+</div>
+
+This is probably a point at which you give up and find another way of doing things. It is, however, possible to implement a fully functioning curiously recurring class system in C# by simply adding a constraint to the base class like so:
+
+<div>
+[code lang="csharp"]
+	public abstract class Base&lt;T&gt; where T : Base&lt;T&gt;{
+		public T FluentMethod() {
+			return (T)(this); 
+		}
+	}
+
+	public class Derived : Base&lt;Derived&gt; {
+	}
+[/code]
+</div>
+
+If you attempt to read the constraint your brain will probably spin in infinite circles trying to figure out how it is even possible for a type parameter to be the same as the class itself. The fact that it works, however, is not more magic than the C++ version, where the recursive nature of the class declaration simply compiles. What the constraint really says is that *T is a class that derives from Base<T>*, which is what `Derived` is.
+
+Another observation. You cannot use `Base<T>` by itself. It *must* be inherited from. The `abstract` keyword is not compulsory, it will compile without it. You just won't be able to declare an instance of `Base<T>` by itself.
+
+This post joins a long list of posts that are inspired by [one of my StackOverflow answers][2]. The code that uses this pattern can be found in [MVCContrib project][3].
+
+ [1]: http://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
+ [2]: http://stackoverflow.com/questions/3783321/why-does-this-generic-constraint-compile-when-it-seems-to-have-a-circular-referen/3783459#3783459
+ [3]: http://mvccontrib.codeplex.com/SourceControl/changeset/view/b7039b7291cf#src%2fMvcContrib.FluentHtml%2fElements%2fButtonBase.cs
