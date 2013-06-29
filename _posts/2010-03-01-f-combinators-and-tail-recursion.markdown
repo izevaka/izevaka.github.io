@@ -25,12 +25,12 @@ I am getting ahead of myself though. Combinators are a mathematical concept pion
 One distinct characteristic of a combinator function is that all of its variables are bound. That means that the function only depends on its parameters, not any other data structures or function defined elsewhere. Just about the best description of what is a combinator and what isn't can be found [here](http://mvanier.livejournal.com/2897.html)
 
 <div>
-[code lang="fsharp"]
+{% highlight fsharp %}
 let freevar=3 //a variable
 
 let IAmACombinator x = x*2;; //variable x is bound as a formal parameter
 let IAmNotACombinator x = x*y;; x is bound but y is free. This is not a combinator
-[/code]
+{% endhighlight %}
 </div>
 
 ### Example
@@ -40,11 +40,11 @@ Lets do some examples. An algorithm that I will implement is the sum of arithmet
 This is the normal recursive arithmetic progression function:
 
 <div>
-[code lang="fsharp"]
+{% highlight fsharp %}
 let rec progsum x =  
-    if x &lt;= 1 then 1 
+    if x <= 1 then 1 
     else x+progsum (x-1)
-[/code]
+{% endhighlight %}
 </div>
 
 ### Combinator Version
@@ -53,15 +53,15 @@ Thanks to F# type inference, the  combinator function is pretty the same for any
 This is the combinator version of the above function:
 
 <div>
-[code lang="fsharp"]
+{% highlight fsharp %}
 //Normal arithmentic progression sum combinator
-let rec comb f = f (fun x -&gt; comb f x)
+let rec comb f = f (fun x -> comb f x)
 let progworker f x = 
-    if x &lt;= 1 then 1 
+    if x <= 1 then 1 
     else x+f(x-1)
 //Use partial application to wrap up the combinator call    
 let progCombinator x = comb progworker x ;;
-[/code]
+{% endhighlight %}
 </div>
 
 This might need a bit of explaining. `comb` is a higher order function that takes another function as a parameter and returns a function taking one argument. This returned function is what we actually want - a function taking one parameter and returning something of the same type as the parameter.
@@ -69,13 +69,13 @@ This might need a bit of explaining. `comb` is a higher order function that take
 In the above snippet `progCombinator` is a convenient way to partially apply our combinator to the arithmetic progression worker function. We could have just as easily done for a factorial:
 
 <div>
-[code lang="fsharp"]
+{% highlight fsharp %}
 let factworker f x = 
-    if x &lt;= 1 then 1
+    if x <= 1 then 1
     else f(x-1) * x;;
 //Use partial application to wrap up the combinator call    
 let factCombinator x = comb factworker x ;;
-[/code]
+{% endhighlight %}
 </div>
 
 ### Tail recursion
@@ -83,23 +83,23 @@ let factCombinator x = comb factworker x ;;
 *Tail Call Optimization* is an F# compiler feature (and in some cases [JIT Compiler feature](http://blogs.msdn.com/jomo_fisher/archive/2007/09/19/adventures-in-f-tail-recursion-in-three-languages.aspx)) where it will transform a recursive function into a while loop if the recursive call is the last statement in the function. Let's go back to the original arithmetic progression function and see if that is the case:
 
 <div>
-[code lang="fsharp"]
+{% highlight fsharp %}
 let rec progsum x =  
-    if x &lt;= 1 then 1 
+    if x <= 1 then 1 
     else x+progsum(x-1)
-[/code]
+{% endhighlight %}
 </div>
 
 And it isn't. Even though it looks like the function call is the last statement of the function, `progsum(x+1)`  will be evaluated before `x+progsum(x+1)` can be computed. Let's rewrite it to take advantage of tail recursion:
 
 <div>
-[code lang="fsharp"]
+{% highlight fsharp %}
 let progTR x =  
     let rec inner x sum = 
-        if x &lt;= 1 then sum 
+        if x <= 1 then sum 
         else inner (x-1) (sum + x)
     inner x 1;;
-[/code]
+{% endhighlight %}
 </div>
 
 So, what happened here? Well, for once we declared a wrapper function and the worker function inside it. This is not strictly necessary, but allows to hide some of the implementation semantics. So, if we can visualize how the original function worked, this is a crude diagram that shows the execution path for `x = 4`:
@@ -146,15 +146,15 @@ Tail Recursive:
 So, now that we've gone over combinator functions and tail recursive functions you may ask: "What about tail recursive combinators? Do those exist?". And the answer would be "Yes, indeed, such beasts do exist". Here is the same algorithm implemented as a tail recursive combinator:
 
 <div>
-[code lang="fsharp"]
-let rec combTR f = f (fun x acc -&gt; combTR f x acc)
+{% highlight fsharp %}
+let rec combTR f = f (fun x acc -> combTR f x acc)
 let progTR f x acc = 
     match x with
-    | 1 -&gt; acc
-    | x -&gt; f(x-1) (acc + x);;
+    | 1 -> acc
+    | x -> f(x-1) (acc + x);;
     
 let progCombTR x = combTR progTR x 1;;
-[/code]
+{% endhighlight %}
 </div>
 
 Looking at the code, there is nothing groundbreaking there. Just as we converted the original function into a tail recursive function by adding a second parameter, we did the same for the both the combinator function and the inner function.

@@ -25,15 +25,15 @@ In this post I want to concentrate more on the performance aspects of the soluti
 The non-generic version simply leverages Castle Dynamic Proxy mixins to bundle objects into one instance. The downside is that all of those interfaces are implemented explicitly and the returned instance must be cast to each individual interface to be used. Here is the implementation and the unit test:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 public static object CreateMixin(params object[] instances) {
 
 	ProxyGenerator generator = new ProxyGenerator();
 	ProxyGenerationOptions options = new ProxyGenerationOptions();
 
-	instances.ToList().ForEach(obj =&gt; options.AddMixinInstance(obj));
+	instances.ToList().ForEach(obj => options.AddMixinInstance(obj));
 
-	return generator.CreateClassProxy&lt;object&gt;(options);
+	return generator.CreateClassProxy<object>(options);
 }
 [TestMethod]
 public void CreatedMixinShouldntThrow() {
@@ -46,7 +46,7 @@ public void CreatedMixinShouldntThrow() {
 	((ICat)actual).Meow();
 	var age = ((ICat)actual).Age;
 }
-[/code]
+{% endhighlight %}
 </div>
 
 ###`CreateMixin<T>`
@@ -60,24 +60,24 @@ The initial implementation was fairly slow in comparison to the native class imp
 
 The culprit, as expected, was this bit of code. It uses reflection and is extremely slow compared to native or even Castle mixins. 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
     public void Intercept(IInvocation invocation) {
         invocation.ReturnValue = invocation.Method.Invoke(m_Instance, invocation.Arguments);
     }
-[/code]
+{% endhighlight %}
 </div>
 
 After digging around Dynamic proxy code I have found `IChangeProxyTarget` interface that allows to change the target of invocation in the interceptor. Since we want to simply redirect a call from the combined interface to the implementation, all we need to do is point the invocation towards the actual instance. 
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 
 public void Intercept(IInvocation invocation) {
 	IChangeProxyTarget changeTarget = (IChangeProxyTarget)invocation;
 	changeTarget.ChangeInvocationTarget(m_Target);
 	invocation.Proceed();
 }
-[/code]
+{% endhighlight %}
 </div>
 
 The only icky bit about this is the fact that we need to call `CreateInterfaceProxyWithTargetInterface` in order to be able to switch target of invocation in the interceptor method. What this implies, however is that we need to provide an instance of the combined interface (which never gets used anyway), so we actually create another proxy and pass that to the proxy creation method. A bit recursive, but it gets the job done.
@@ -85,25 +85,25 @@ The only icky bit about this is the fact that we need to call `CreateInterfacePr
 And here is the factory method with test: 
 
 <div>
-[code lang="csharp"]
-public static TMixin CreateMixin&lt;TMixin&gt;(params object[] instances)
+{% highlight csharp %}
+public static TMixin CreateMixin<TMixin>(params object[] instances)
 where TMixin : class {
-	if(instances == null || instances.Length == 0 || instances.Any(o =&gt; o == null))
-		throw new ArgumentException(&quot;All mixins should be non-null&quot;, &quot;instances&quot;);
+	if(instances == null || instances.Length == 0 || instances.Any(o => o == null))
+		throw new ArgumentException("All mixins should be non-null", "instances");
 
 	ProxyGenerator generator = new ProxyGenerator();
 	ProxyGenerationOptions options = new ProxyGenerationOptions();
 	options.Selector = new MixinSelector();
-	var dummy = generator.CreateInterfaceProxyWithoutTarget&lt;TMixin&gt;();
+	var dummy = generator.CreateInterfaceProxyWithoutTarget<TMixin>();
 
-	return generator.CreateInterfaceProxyWithTargetInterface&lt;TMixin&gt;(dummy, options, instances.Select(o =&gt; new MixinInterceptor(o)).ToArray());
+	return generator.CreateInterfaceProxyWithTargetInterface<TMixin>(dummy, options, instances.Select(o => new MixinInterceptor(o)).ToArray());
 }
 [TestMethod]
 public void CreatedGeneric3MixinShouldntThrow() {
 	ICat obj1 = new Cat();
 	IDog obj2 = new Dog();
 	IMouse obj3 = new Mouse();
-	var actual = Factory.CreateMixin&lt;ICatDogMouse&gt;(obj1, obj2, obj3);
+	var actual = Factory.CreateMixin<ICatDogMouse>(obj1, obj2, obj3);
 
 	actual.Bark();
 	var weight = actual.Weight;
@@ -111,7 +111,7 @@ public void CreatedGeneric3MixinShouldntThrow() {
 	var age = actual.Age;
 	actual.Squeek();
 }
-[/code]
+{% endhighlight %}
 </div>
 
 The result is that performance is improved by a lot:
@@ -122,4 +122,4 @@ The result is that performance is improved by a lot:
 
 Oh and by the way, this is for 8M invocations. So it's not that big of a hit in realistic terms. I wouldn't run this in a very tight loop - e.g. image processing or anything real time but it's quite suitable for calling some service every now and again. 
 
-<a href='http://www.somethingorothersoft.com/wp-content/uploads/2010/08/MixinFactory.zip'>MixinFactory Source</a>
+<a href='{{ site.url }}/images/2010/08/MixinFactory.zip'>MixinFactory Source</a>

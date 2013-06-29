@@ -17,7 +17,7 @@ meta:
 ---
 Here is a screenshot of what the now infamous Conroy's tag cloud would look like without the "censorship" attempt:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/tagcloud.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/tagcloud.png" alt="" title="tagcloud" width="320" height="336" class="alignnone size-full wp-image-307" /></a>
+<a href="{{ site.url }}/images/2010/02/tagcloud.png"><img src="{{ site.url }}/images/2010/02/tagcloud.png" alt="" title="tagcloud" width="320" height="336" class="alignnone size-full wp-image-307" /></a>
 
 It's certainly not hugely prominent and, frankly, I am disappointed about that. It would have been way funnier if it was the biggest tag in the cloud.
 
@@ -29,7 +29,7 @@ Here is the greesemonkey script for those that feel inclined to verify the scree
 * When something is to be censored, it will be done in the most half-arsed naive way. The minister's tag cloud was generated from what I suspect a hard-coded array of terms. It would have been absolutely trivial to simply remove the words "ISP Filtering", instead of matching it, which exposed the whole thing.
 
 <div>
-[code lang="javascript"]
+{% highlight javascript %}
 // ==UserScript==
 // @name           TagCloudUnhack
 // @namespace      CONROY
@@ -40,7 +40,7 @@ Here is the greesemonkey script for those that feel inclined to verify the scree
 
 function unique(x) {   
   tmp = new Array(0);   
-  for(i=0;i&lt;x.length;i++) {      
+  for(i=0;i<x.length;i++) {      
     if(!contains(tmp, x[i])) {         
       tmp.length+=1;         
       tmp[tmp.length-1]=x[i];      
@@ -50,7 +50,7 @@ function unique(x) {
 }
 
 function contains(x, e) {   
-  for(j=0;j&lt;x.length;j++) {
+  for(j=0;j<x.length;j++) {
     if(x[j]==e) {
       return true; 
     }
@@ -59,17 +59,17 @@ function contains(x, e) {
 }
 
 function getTagClass(z) {   
-  var tagClass = &quot;smallestTag&quot;;   
+  var tagClass = "smallestTag";   
   if(z==smallest) {   
-    tagClass=&quot;smallestTag&quot;;   
+    tagClass="smallestTag";   
   } else if(z==largest) {   
-    tagClass=&quot;largestTag&quot;;    
-  } else if(z &gt;= large) {    
-    tagClass=&quot;largeTag&quot;;    
-  } else if(z &lt;= large &amp;&amp; z &gt;= medium) {    
-    tagClass=&quot;mediumTag&quot;;    
-  } else if(z &lt;= medium &amp;&amp; z &gt;= smallest) {    
-    tagClass=&quot;smallTag&quot;;   
+    tagClass="largestTag";    
+  } else if(z >= large) {    
+    tagClass="largeTag";    
+  } else if(z <= large && z >= medium) {    
+    tagClass="mediumTag";    
+  } else if(z <= medium && z >= smallest) {    
+    tagClass="smallTag";   
   }   
   return tagClass;
 }
@@ -89,10 +89,10 @@ var largest = 0;
 var smallest = 1;
 
 /* Script creates an array and finds the most used tag */
-for(var i=0; i&lt;unique.length; i++) {
+for(var i=0; i<unique.length; i++) {
    var mullet=0;
    unique[i] = unique[i].replace(/^\s+|\s+$/g, '') ;
-   for(var j=0; j&lt;split.length; j++) {
+   for(var j=0; j<split.length; j++) {
       if (unique[i]==split[j]) {
           mullet=mullet+1;
       }
@@ -100,7 +100,7 @@ for(var i=0; i&lt;unique.length; i++) {
    }
 }
 
-for(var d=0;d&lt;frequency.length;d++){
+for(var d=0;d<frequency.length;d++){
    largest=Math.max(largest,frequency[d]); //find largest
 }
 var diff = largest-smallest; //difference, smallest is always 1
@@ -110,15 +110,15 @@ var medium = 1 + dist;
 
 // write out the tag cloud
 if(unique.length != 0) {
-//document.write('&lt;div id=\&quot;cloud-wrap\&quot;&gt;');
-var out = &quot;&quot;;
+//document.write('<div id=\"cloud-wrap\">');
+var out = "";
 
 
-//for(var i=0; i&lt;unique.length; i++)
-for(var i=0; i&lt;=15/*&lt;-Important! increase this value by 1 everytime a keyword is excluded below*/; i++) 
+//for(var i=0; i<unique.length; i++)
+for(var i=0; i<=15/*<-Important! increase this value by 1 everytime a keyword is excluded below*/; i++) 
 {
 	var z=0;
-	for(var j=0; j&lt;split.length; j++) {
+	for(var j=0; j<split.length; j++) {
 		if (unique[i]==split[j]) {
 			z=z+1;
 		}
@@ -126,17 +126,17 @@ for(var i=0; i&lt;=15/*&lt;-Important! increase this value by 1 everytime a keyw
 	 }
 	 var size = getTagClass(z);
 	 //Customise the tag-cloud to display what shows up
-	 //if (unique[i] == &quot;ISP Filtering&quot;)
+	 //if (unique[i] == "ISP Filtering")
 	 //{
 	//	 continue;
 	// }
-	 out += ('&lt;a class=&quot;'+size+'&quot; href=\&quot;http://www.minister.dbcde.gov.au/search?q='+unique[i]+'&quot;&gt;'+unique[i]+'&lt;/a&gt; ');
+	 out += ('<a class="'+size+'" href=\"http://www.minister.dbcde.gov.au/search?q='+unique[i]+'">'+unique[i]+'</a> ');
   }
 }
 
 var tagcloud = document.getElementById('tag-cloud');
 tagcloud.innerHTML=out;
 
-[/code]
+{% endhighlight %}
 </div>
 

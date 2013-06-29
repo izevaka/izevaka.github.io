@@ -17,19 +17,19 @@ meta:
 As Jeremy Clarkson would say, I have been inundated with [a request](http://www.somethingorothersoft.com/2010/02/01/double-dispatch-without-rtti/comment-page-1/#comment-250) to performance test a `dynamic_cast` DD mechanism against the [pure vtable](http://www.somethingorothersoft.com/2010/02/01/double-dispatch-without-rtti/) one. The results surprised me, both in Debug and Release modes. So here is the `dynamic_cast` implementation:
 
 <div class="foo">
-[code lang="cpp"]
-void c_rtti::foobar(a_rtti &amp; a2) {
-   c_rtti* c_ = dynamic_cast&lt;c_rtti*&gt;(&amp;a2);
+{% highlight cpp %}
+void c_rtti::foobar(a_rtti & a2) {
+   c_rtti* c_ = dynamic_cast<c_rtti*>(&a2);
    if (c_) {
       ::foobar(*this,*c_);
       return;
    }
-   b_rtti* b_ = dynamic_cast&lt;b_rtti*&gt;(&amp;a2);
+   b_rtti* b_ = dynamic_cast<b_rtti*>(&a2);
    if (b_) {
       ::foobar(*b_, *this);
    }
 }
-[/code]
+{% endhighlight %}
 </div>
 
 I have used the most non-trivial case where the above function is called with `a2` parameter pointing to an instance of `b_rtti`, thus triggerring two dynamic casts. I used the same technique on the vtable implementation for consistency, although it doesn't matter as the sequence of execution is the same for any combination of objects. The test ran for 4 million iterations.
@@ -37,22 +37,22 @@ I have used the most non-trivial case where the above function is called with `a
 Here is the test code:
 
 <div class="foo">
-[code lang="cpp"]
-        a&amp; a_ = c();
+{% highlight cpp %}
+        a& a_ = c();
         b bInstance;
-        a&amp; b_ = bInstance;
+        a& b_ = bInstance;
         a_.foobar(b_);
-[/code]
+{% endhighlight %}
 </div>
 
 Just to show what actually happens in both implementations, here are the sequence diagrams.
 #### vtable:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/vtable1.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/vtable1.png" alt="" title="vtable" width="346" height="230" class="alignnone size-full wp-image-238" /></a>
+<a href="{{ site.url }}/images/2010/02/vtable1.png"><img src="{{ site.url }}/images/2010/02/vtable1.png" alt="" title="vtable" width="346" height="230" class="alignnone size-full wp-image-238" /></a>
 
 #### dynamic_cast:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/rtti.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/rtti.png" alt="" title="dynamic_cast Sequnce Diagram" width="254" height="304" class="alignnone size-full wp-image-236" /></a>
+<a href="{{ site.url }}/images/2010/02/rtti.png"><img src="{{ site.url }}/images/2010/02/rtti.png" alt="" title="dynamic_cast Sequnce Diagram" width="254" height="304" class="alignnone size-full wp-image-236" /></a>
 
 ### The results
 In debug mode, RTTI implementation is about 20% faster:

@@ -28,23 +28,23 @@ The decision to make `Nullable<T>` a value type actually makes sense if you thin
 Under the hood, the compiler, in fact translates comparison to null to a call to HasValue. The below MSIL demonstrates that:
 
 <div>
-[code lang="csharp"]
-	.locals init ([0] valuetype [mscorlib]System.Nullable`1&lt;int32&gt; 'value',
+{% highlight csharp %}
+	.locals init ([0] valuetype [mscorlib]System.Nullable`1<int32> 'value',
 		   [1] bool hasvalue,
 		   [2] bool hasvalue2)
 
 	//int? value = null;
 	IL_0001:  ldloca.s   'value'
-	IL_0003:  initobj    valuetype [mscorlib]System.Nullable`1&lt;int32&gt;
+	IL_0003:  initobj    valuetype [mscorlib]System.Nullable`1<int32>
 	//bool hasvalue = value.HasValue;
 	IL_0009:  ldloca.s   'value'
-	IL_000b:  call       instance bool valuetype [mscorlib]System.Nullable`1&lt;int32&gt;::get_HasValue()
+	IL_000b:  call       instance bool valuetype [mscorlib]System.Nullable`1<int32>::get_HasValue()
 	IL_0010:  stloc.1
 	//bool hasvalue2 = value != null;
 	IL_0011:  ldloca.s   'value' //loads a variable onto evaluation stack
-	IL_0013:  call       instance bool valuetype [mscorlib]System.Nullable`1&lt;int32&gt;::get_HasValue() //calls HasValue
+	IL_0013:  call       instance bool valuetype [mscorlib]System.Nullable`1<int32>::get_HasValue() //calls HasValue
 	IL_001b:  stloc.2 //Stores the result in location 2 (hasvalue2)
-[/code]
+{% endhighlight %}
 </div>
 
 As you can see the generated IL for `hasvalue = value.HasValue` and `hasvalue2 = value != null` are identical.  
@@ -58,20 +58,20 @@ Also from above code you can see that assigning null to a nullable value is the 
 C# compiler also does special things with ternary operator for nullable types. The following code compiles:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 int? nullableIntVal = 4;
 int intVal = nullableIntVal ?? -1;
-[/code]
+{% endhighlight %}
 </div>
 
 The above is just syntactic sugar for calling `HasValue` and if it's true calling GetValueOrDefault(). The compiler actually generates a temporary variable to call `HasValue` off in both Release and Debug modes. Not sure why that is. Below code illustrates the equivalent C# code to what the compiler generates for ternary operator.
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 int? nullableIntVal = 4;
 int? temp = nullableIntVal;
 int intVal = temp.HasValue ?? temp.GetValueOrDefault() : -1;
-[/code]
+{% endhighlight %}
 </div>
 
 #Summary

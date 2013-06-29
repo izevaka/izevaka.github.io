@@ -27,31 +27,31 @@ C++ developers are well familiar with the [CRTP][1] - Curiously Recurring Templa
 Every now and then I wish this pattern can be used in C#. If you attempt to implement it C++ style, you would get a compile error:
 
 <div>
-[code lang="csharp"]
-	public abstract class Base&lt;T&gt; {
+{% highlight csharp %}
+	public abstract class Base<T> {
 		public T FluentMethod() {
-			return (T)(this); //error CS0030: Cannot convert type 'InheritanceTest.Base&lt;T&gt;' to 'T'
+			return (T)(this); //error CS0030: Cannot convert type 'InheritanceTest.Base<T>' to 'T'
 		}
 	}
 
-	public class Derived : Base&lt;Derived&gt; {
+	public class Derived : Base<Derived> {
 	}
-[/code]
+{% endhighlight %}
 </div>
 
 This is probably a point at which you give up and find another way of doing things. It is, however, possible to implement a fully functioning curiously recurring class system in C# by simply adding a constraint to the base class like so:
 
 <div>
-[code lang="csharp"]
-	public abstract class Base&lt;T&gt; where T : Base&lt;T&gt;{
+{% highlight csharp %}
+	public abstract class Base<T> where T : Base<T>{
 		public T FluentMethod() {
 			return (T)(this); 
 		}
 	}
 
-	public class Derived : Base&lt;Derived&gt; {
+	public class Derived : Base<Derived> {
 	}
-[/code]
+{% endhighlight %}
 </div>
 
 If you attempt to read the constraint your brain will probably spin in infinite circles trying to figure out how it is even possible for a type parameter to be the same as the class itself. The fact that it works, however, is not more magic than the C++ version, where the recursive nature of the class declaration simply compiles. What the constraint really says is that *T is a class that derives from Base<T>*, which is what `Derived` is.

@@ -22,17 +22,17 @@ meta:
 ---
 I have spent a bit of time trying to figure out how to generate an XML document with all the XML namespace paraphernalia - including schema location. I got stuck trying to create the `xmlns:xsi` attribute - LINQ to XML kept creating a namespace alias for me and calling it `p1` like so:
 
-[code lang="xml"]&lt;rootNode p1:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; p1=&quot;http://www.foo.bar&quot; xmlns=&quot;http://www.foo.bar&quot;&gt;
-&lt;/rootNode&gt;[/code]
+{% highlight xml %}<rootNode p1:xsi="http://www.w3.org/2001/XMLSchema-instance" p1="http://www.foo.bar" xmlns="http://www.foo.bar">
+</rootNode>{% endhighlight %}
 
 Turns out the answer is pretty simple. I was correct in my assumption that in order to create a namespace alias one must simply add an attribute to the node. However the `xmlns` namespace is special and one cannot use the string `xmlns` or use the default namespace. Instead one must use `XNamespace.Xmlns` - like so: `new XAttribute(XNamespace.Xmlns + "xsi", "http://www.w3.org/2001/XMLSchema-instance")`. Here is complete code:
 
-[code lang="csharp"]XNamespace xsi = XNamespace.Get(&quot;http://www.w3.org/2001/XMLSchema-instance&quot;);
-            XNamespace defaultNamespace = XNamespace.Get(&quot;http://www.foo.bar&quot;);
-            XElement root = new XElement(defaultNamespace + &quot;rootNode&quot;,
-                new XAttribute(XNamespace.Xmlns + &quot;xsi&quot;, xsi.NamespaceName),
-                new XAttribute(xsi + &quot;noNamespaceSchemaLocation&quot;, @&quot;..\path\to\schema.xsd&quot;));
-[/code]
+{% highlight csharp %}XNamespace xsi = XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance");
+            XNamespace defaultNamespace = XNamespace.Get("http://www.foo.bar");
+            XElement root = new XElement(defaultNamespace + "rootNode",
+                new XAttribute(XNamespace.Xmlns + "xsi", xsi.NamespaceName),
+                new XAttribute(xsi + "noNamespaceSchemaLocation", @"..\path\to\schema.xsd"));
+{% endhighlight %}
 The above code will generate this:
-[code lang="xml"]&lt;rootNode xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;..\path\to\schema.xsd&quot; xmlns=&quot;http://www.foo.bar&quot; &gt;
-&lt;/rootNode&gt;[/code]
+{% highlight xml %}<rootNode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\path\to\schema.xsd" xmlns="http://www.foo.bar" >
+</rootNode>{% endhighlight %}

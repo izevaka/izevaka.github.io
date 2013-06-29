@@ -26,7 +26,7 @@ So the other day I found the most useless UI detail in iPhone, and from a quick 
 
 Below image demonstrates the effect:
 
-<img src="http://www.somethingorothersoft.com/wp-content/uploads/2011/06/Shift.gif" alt="" title="Shift" width="320" height="256" class="alignnone size-full wp-image-535" />
+<img src="{{ site.url }}/images/2011/06/Shift.gif" alt="" title="Shift" width="320" height="256" class="alignnone size-full wp-image-535" />
 
 You can easily verify this yourself by following these steps:
 

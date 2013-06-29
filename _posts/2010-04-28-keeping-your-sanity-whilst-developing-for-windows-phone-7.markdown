@@ -17,7 +17,7 @@ meta:
   wp_jd_target: http://www.somethingorothersoft.com/2010/04/28/keeping-your-sanity-whilst-developing-for-windows-phone-7/
   wp_jd_bitly: http://bit.ly/btgB8Y
 ---
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/frustration-300x299.jpg"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/frustration-300x299.jpg" alt="" title="frustration-300x299" width="300" height="299" class="alignnone size-full wp-image-380" /></a>
+<a href="{{ site.url }}/images/2010/04/frustration-300x299.jpg"><img src="{{ site.url }}/images/2010/04/frustration-300x299.jpg" alt="" title="frustration-300x299" width="300" height="299" class="alignnone size-full wp-image-380" /></a>
 
 Please note that this post is written in April 2010, when the WP7 SDK is only one month old. Most of the issues described here will likely not be a problem in later releases. The defining characteristic of such pre-release SDK is that when you are doing the right thing, everything is OK. When you screw up, it just goes KABOOM! without much explanation.
 
@@ -28,9 +28,9 @@ I spent a few hours of trying to work out why I am getting these run-time errors
 
 If you to do something like this:
 
-<div>[code lang="xml"]
-&lt;DiscreteObjectKeyFrame  KeyTime=&quot;00:00:00&quot; Value=&quot;{x:Static Visibility.Collapsed}&quot;&gt;
-[/code]</div>
+<div>{% highlight xml %}
+<DiscreteObjectKeyFrame  KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}">
+{% endhighlight %}</div>
 
 You will get an obtuse error at runtime:
 
@@ -41,31 +41,31 @@ Additional information: 2024 An error has occurred. [Line: 114 Position: 61]
 
 Get used to seeing that error. It'll happen every time you screw up the XAML. Sometimes it's more helpful than other times and you get the line number of the offending XAML. The line number, along with the exception text will be available in the Output window:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/crash1.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/crash1-1024x611.png" alt="" title="crash1" width="450" height="268" class="alignnone size-large wp-image-369" /></a>
+<a href="{{ site.url }}/images/2010/04/crash1.png"><img src="{{ site.url }}/images/2010/04/crash1-1024x611.png" alt="" title="crash1" width="450" height="268" class="alignnone size-large wp-image-369" /></a>
 
 If you are like me and rarely look at the error window, perhaps you should start now. This particular error doesn't raise a warning during compilation, but does come up as an error when the file is open in the editor:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/xaml_error.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/xaml_error.png" alt="" title="xaml_error" width="641" height="262" class="alignnone size-full wp-image-370" /></a>
+<a href="{{ site.url }}/images/2010/04/xaml_error.png"><img src="{{ site.url }}/images/2010/04/xaml_error.png" alt="" title="xaml_error" width="641" height="262" class="alignnone size-full wp-image-370" /></a>
 
 **Solution:** Don't use `x:Static` but instead an instance of a type in XAML like so:
-<div>[code lang="xml"]
-	&lt;DiscreteObjectKeyFrame  KeyTime=&quot;00:00:00&quot;&gt;
-		&lt;DiscreteObjectKeyFrame.Value&gt;
-			&lt;Visibility&gt;Collapsed&lt;/Visibility&gt;
-		&lt;/DiscreteObjectKeyFrame.Value&gt;
-	&lt;/DiscreteObjectKeyFrame&gt;
-[/code]</div>
+<div>{% highlight xml %}
+	<DiscreteObjectKeyFrame  KeyTime="00:00:00">
+		<DiscreteObjectKeyFrame.Value>
+			<Visibility>Collapsed</Visibility>
+		</DiscreteObjectKeyFrame.Value>
+	</DiscreteObjectKeyFrame>
+{% endhighlight %}</div>
 
 ## Misspelling Animation Element or Property Name
 **Problem:** Misspelling Animation Element or Property Name
 
 In the below code `Storyboard.TargetName` is invalid. The project compiles and there are no errors in the error window.
 
-<div>[code lang="xml"]
-	&lt;ObjectAnimationUsingKeyFrames Storyboard.TargetName=&quot;SearchBoxMisspelled&quot; Storyboard.TargetProperty=&quot;Visibility&quot;&gt;
-		&lt;!--animation key frames--&gt;
-	&lt;/ObjectAnimationUsingKeyFrames&gt;
-[/code]</div>
+<div>{% highlight xml %}
+	<ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxMisspelled" Storyboard.TargetProperty="Visibility">
+		<!--animation key frames-->
+	</ObjectAnimationUsingKeyFrames>
+{% endhighlight %}</div>
 
 At run-time, you get this error message:
 
@@ -92,7 +92,7 @@ System.Windows.dll!System.Windows.Media.Animation.Storyboard.Begin() + 0x6 bytes
 
 After adding a reference library you might start getting this error when you debug the project:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/error_debugging.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/error_debugging.png" alt="" title="error_debugging" width="391" height="171" class="alignnone size-full wp-image-371" /></a>
+<a href="{{ site.url }}/images/2010/04/error_debugging.png"><img src="{{ site.url }}/images/2010/04/error_debugging.png" alt="" title="error_debugging" width="391" height="171" class="alignnone size-full wp-image-371" /></a>
 
 This is caused, as far as I can tell, by your references' dependencies not being copied to the device. After hours of playing around with this it's apparent to me that this is an intermittent issue with Visual Studio. It is supposed to work out what all the references' dependencies are, copy them to the output folder and add them to the manifest file (`$(OutputDir)\AppManifest.xaml`).
 
@@ -100,7 +100,7 @@ Sometimes that doesn't happen and the app gets deployed without those dependenci
 
 The error will look something like this:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/runtime_error.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/04/runtime_error.png" alt="" title="runtime_error" width="396" height="772" class="alignnone size-full wp-image-372" /></a>
+<a href="{{ site.url }}/images/2010/04/runtime_error.png"><img src="{{ site.url }}/images/2010/04/runtime_error.png" alt="" title="runtime_error" width="396" height="772" class="alignnone size-full wp-image-372" /></a>
 
 <pre>
 2024 An error has occurred[Line: <line> Position: <position>]

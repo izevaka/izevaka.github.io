@@ -16,4 +16,4 @@ meta:
 ---
 Thanks for the quota-free day, guys, I certainly watched a lot of youtube :))
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2009/12/volumegraphs.cgi_.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2009/12/volumegraphs.cgi_.png" alt="volumegraphs.cgi" title="volumegraphs.cgi" width="640" height="400" class="alignnone size-full wp-image-177" /></a>
+<a href="{{ site.url }}/images/2009/12/volumegraphs.cgi_.png"><img src="{{ site.url }}/images/2009/12/volumegraphs.cgi_.png" alt="volumegraphs.cgi" title="volumegraphs.cgi" width="640" height="400" class="alignnone size-full wp-image-177" /></a>

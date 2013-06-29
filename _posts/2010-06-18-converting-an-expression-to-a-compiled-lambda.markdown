@@ -22,7 +22,7 @@ Today I had to convert a binary expression to a lambda and then use in a where c
 This is the first cut of the code:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 
 public class ClassWithProperties {
 	public string Prop { get; set; }
@@ -30,32 +30,32 @@ public class ClassWithProperties {
 
 static void ExpressionCrashes() {
 
-	var expr = Expression.Equal(Expression.Property(Expression.Variable(typeof(ClassWithProperties)), &quot;Prop&quot;), Expression.Constant(&quot;value2&quot;));
+	var expr = Expression.Equal(Expression.Property(Expression.Variable(typeof(ClassWithProperties)), "Prop"), Expression.Constant("value2"));
 
 	var props = new[] { Expression.Parameter(typeof(ClassWithProperties)) };
-	//Throws &lt;variable '' of type 'SOCSTest.ClassWithProperties' referenced from scope '', but it is not defined&gt;
-	var lambda = Expression.Lambda&lt;Func&lt;ClassWithProperties, bool&gt;&gt;(expr, props).Compile();
+	//Throws <variable '' of type 'SOCSTest.ClassWithProperties' referenced from scope '', but it is not defined>
+	var lambda = Expression.Lambda<Func<ClassWithProperties, bool>>(expr, props).Compile();
 
-	var items = new List&lt;ClassWithProperties&gt; { 
-		new ClassWithProperties{Prop = &quot;value1&quot;},
-		new ClassWithProperties{Prop = &quot;value2&quot;},
-		new ClassWithProperties{Prop = &quot;value2&quot;}
+	var items = new List<ClassWithProperties> { 
+		new ClassWithProperties{Prop = "value1"},
+		new ClassWithProperties{Prop = "value2"},
+		new ClassWithProperties{Prop = "value2"}
 	};
 
-	//Should return &lt;&quot;value2&quot;, &quot;value2&quot;&gt;
+	//Should return <"value2", "value2">
 	items.Where(lambda);
 }
 
-[/code]
+{% endhighlight %}
 </div>
 
 The expression is a basic one - it calls an equality comparison on a property off an object and a constant. It is equivalent to this:
 
 <div>
-[code lang="csharp"]
-value.Prop == &quot;value2&quot;
+{% highlight csharp %}
+value.Prop == "value2"
 //Where value is a parameter of type ClassWithProperties
-[/code]
+{% endhighlight %}
 </div>
 
 Googling for this exception and just general expression and lambda stuff kinda hints at people having the same problem as I am but with no fast solution. It was Jon Skeet's <a href="http://stackoverflow.com/questions/1574427/lambda-parameter-not-in-scope-while-building-binary-lambda-expression/1574455#1574455">answer to question I didn't understand</a> on StackOverflow that finally put me onto the right track.
@@ -65,24 +65,24 @@ In order to compile a lambda from an expression, you need to provide **all insta
 Rewriting the above code yields something that doesn't crash:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 static void ExpressionWorks() {
 	var variable = Expression.Variable(typeof(ClassWithProperties));
-	var expr = Expression.Equal(Expression.Property(variable, &quot;Prop&quot;), Expression.Constant(&quot;value2&quot;));
+	var expr = Expression.Equal(Expression.Property(variable, "Prop"), Expression.Constant("value2"));
 
 	var props = new []{ variable };
-	var lambda = Expression.Lambda&lt;Func&lt;ClassWithProperties, bool&gt;&gt;(expr, props).Compile();
+	var lambda = Expression.Lambda<Func<ClassWithProperties, bool>>(expr, props).Compile();
 
-	var items = new List&lt;ClassWithProperties&gt; { 
-		new ClassWithProperties{Prop = &quot;value1&quot;},
-		new ClassWithProperties{Prop = &quot;value2&quot;},
-		new ClassWithProperties{Prop = &quot;value2&quot;}
+	var items = new List<ClassWithProperties> { 
+		new ClassWithProperties{Prop = "value1"},
+		new ClassWithProperties{Prop = "value2"},
+		new ClassWithProperties{Prop = "value2"}
 	};
 
-	//Returns &lt;&quot;value2&quot;, &quot;value2&quot;&gt;
+	//Returns <"value2", "value2">
 	items.Where(lambda);
 }
-[/code]
+{% endhighlight %}
 </div>
 
 As you can see, we reused the instance `variable` in both expression declaration and `Expression.Lambda` call. Everything works fine now.
@@ -93,13 +93,13 @@ My situation was such as that I had to deal with an already created expression. 
 Luckily, [`ExpressionVisitor`][1] API provides an easy way to achieve this. All you have to do is inherit from `ExpressionVisitor` and implement one function to trap all the goodies we need:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 public class ParameterVisitor : ExpressionVisitor{
 
-	List&lt;ParameterExpression&gt; m_Parameters;
+	List<ParameterExpression> m_Parameters;
 
-	public IEnumerable&lt;ParameterExpression&gt; GetParameters(Expression expr) {
-		m_Parameters = new List&lt;ParameterExpression&gt;();
+	public IEnumerable<ParameterExpression> GetParameters(Expression expr) {
+		m_Parameters = new List<ParameterExpression>();
 		Visit(expr);
 		return m_Parameters;
 	}
@@ -112,33 +112,33 @@ public class ParameterVisitor : ExpressionVisitor{
 		return base.VisitParameter(p);
 	}
 }
-[/code]
+{% endhighlight %}
 </div>
 
 We can even create an extension method to hide all complexity of creating a lambda:
 
 <div>
-[code lang="csharp"]
-public static Func&lt;TSource, TResult&gt; CreateLambda&lt;TSource, TResult&gt;(this Expression expression) {
+{% highlight csharp %}
+public static Func<TSource, TResult> CreateLambda<TSource, TResult>(this Expression expression) {
 	var visitor = new Bluecap4.Core.Expressions.ParameterVisitor();
 	var parameters = visitor.GetParameters(expression);
 			
-	return Expression.Lambda&lt;Func&lt;TSource, TResult&gt;&gt;(expression, parameters).Compile();
+	return Expression.Lambda<Func<TSource, TResult>>(expression, parameters).Compile();
 }
 //Usage
 static void ExpressionWorks() {
-	var expr = Expression.Equal(Expression.Property(Expression.Variable(typeof(ClassWithProperties)), &quot;Prop&quot;), Expression.Constant(&quot;value2&quot;));
+	var expr = Expression.Equal(Expression.Property(Expression.Variable(typeof(ClassWithProperties)), "Prop"), Expression.Constant("value2"));
 
-	var items = new List&lt;ClassWithProperties&gt; { 
-		new ClassWithProperties{Prop = &quot;value1&quot;},
-		new ClassWithProperties{Prop = &quot;value2&quot;},
-		new ClassWithProperties{Prop = &quot;value2&quot;}
+	var items = new List<ClassWithProperties> { 
+		new ClassWithProperties{Prop = "value1"},
+		new ClassWithProperties{Prop = "value2"},
+		new ClassWithProperties{Prop = "value2"}
 	};
 
-	//Returns &lt;&quot;value2&quot;, &quot;value2&quot;&gt;
-	items.Where(expr.CreateLambda&lt;Func&lt;ClassWithProperties,bool&gt;&gt;());
+	//Returns <"value2", "value2">
+	items.Where(expr.CreateLambda<Func<ClassWithProperties,bool>>());
 }
-[/code]
+{% endhighlight %}
 </div>
 
 

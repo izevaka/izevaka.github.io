@@ -32,7 +32,7 @@ The first problem is pretty easy to solve - the installers are actually self-ext
 
 So before jumping into recovery, and you should really do this in controlled circumstances - i.e. practice recovery, have a look at what network driver you have in Windows. Mine (15" April 2011 MacBook Pro) looks like this:  
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2011/07/driver.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2011/07/driver.png" alt="" title="driver" width="352" height="444" class="alignnone size-full wp-image-543" /></a>
+<a href="{{ site.url }}/images/2011/07/driver.png"><img src="{{ site.url }}/images/2011/07/driver.png" alt="" title="driver" width="352" height="444" class="alignnone size-full wp-image-543" /></a>
 
 If you are stuck and can only boot into MacOS, you look up the adapter's details in System Diagnostics for hints about what it's called.
 

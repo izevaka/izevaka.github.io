@@ -29,22 +29,22 @@ So, coming back to the point of this dribble. I like words. I like the explicitn
 
 My biggest hurdle understanding F# is the fact that the same syntax can be used for instantiation and matching. For example defining a function that takes a tuple with two members:
 
-[code lang="fsharp"]let func (a, b) = printfn &quot;a: %d, b: %d&quot; a b;;[/code]
+{% highlight fsharp %}let func (a, b) = printfn "a: %d, b: %d" a b;;{% endhighlight %}
 
 The syntax is the same as when you define a tuple:
 
-[code lang="fsharp"]let tuple = (4, 5);;[/code]
+{% highlight fsharp %}let tuple = (4, 5);;{% endhighlight %}
 
 Wheres a, say C++ would do something like this:
 
 <div>
 
-[code lang="cpp"]
-Tuple&lt;int, int&gt; = new Tuple&lt;int, int&gt;(4,5);
+{% highlight cpp %}
+Tuple<int, int> = new Tuple<int, int>(4,5);
 
-void func(Tuple&lt;int, int&gt; tuple) {
+void func(Tuple<int, int> tuple) {
 }
-[/code]
+{% endhighlight %}
 </div>
 F# seems to just use all these symbol operators for everything and I just can't let go of my attachment to words. `List.Add` is logical, `[4;5;]@[6;7]` is less so, especially considering that the operands cound be either values or lists.
 

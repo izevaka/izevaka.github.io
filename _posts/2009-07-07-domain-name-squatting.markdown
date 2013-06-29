@@ -52,6 +52,6 @@ Out of the 16 of the above sites that I tried 4 were <a href="http://en.wikipedi
 
 Am I missing something or is the whole internet advertising bubble full of hot air? Surely investing into a generic domain name for that much will not pay off in the matter of decades. I would imagine that in order to get $1 advertising dollar the site would have to make at least double that in revenue for the advertiser. When will cameras.com generate (at least) 2 million dollars of sales for people advertising on cameras.com? In about a thousand years, if the internet still exists then.
 
-Going with the example of cameras.com urlappraisal values the site at $31K - <a href="http://www.urlappraisal.net/search.php?textSearch=cameras.com&amp;searchSubmit=Appraise">link here</a>. Seems like whoever forked off cool $1.5M paid too much. Can't say I feel sorry for them.
+Going with the example of cameras.com urlappraisal values the site at $31K - <a href="http://www.urlappraisal.net/search.php?textSearch=cameras.com&searchSubmit=Appraise">link here</a>. Seems like whoever forked off cool $1.5M paid too much. Can't say I feel sorry for them.
 
 Then again, the front page made by a cyber-squatter is hardly a reliable source of information, in which case this whole article becomes moot. The question still remains though - Does the internet advertising generate THAT MUCH revenue for the advertiser or is this some sort of inverse pyramid still powered by Google IPO?

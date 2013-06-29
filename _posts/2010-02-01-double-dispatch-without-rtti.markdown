@@ -18,28 +18,28 @@ I liked my [StackOverflow answer](http://stackoverflow.com/questions/2159496/c-p
 
 So the trick to get this working as pointed out in the article was to call the function on the pointer or reference of the parameter to the original function, thus cauising a second dispatch.
 <div class="foo">
-[code lang="cpp"]
+{% highlight cpp %}
 class A {
-  virtual void PublicFunction(B&amp; b) {
+  virtual void PublicFunction(B& b) {
     b.PerformFunction(*this);
   }
 }
-[/code]
+{% endhighlight %}
 </div>
 
 The problem with doing this sort of thing with subclasses of the same base is that we need to allow the possibility of the base class being called with one of its subclasses as a parameter. Luckily we can use forward declarations to define the functions and implement them later on.
 
 <div class="foo">
-[code lang="cpp"]
+{% highlight cpp %}
 class b;
 class c;
 class a {
 protected:
-    virtual void doFoobar(a&amp; a2); //do stuff here 
-    virtual void doFoobar(b&amp; b2); //delegate to b
-    virtual void doFoobar(c&amp; c2); //delegate to c
+    virtual void doFoobar(a& a2); //do stuff here 
+    virtual void doFoobar(b& b2); //delegate to b
+    virtual void doFoobar(c& c2); //delegate to c
 public:
-    virtual void foobar(a&amp; a2) {
+    virtual void foobar(a& a2) {
         a2.doFoobar(*this);
     }
     friend class b;
@@ -47,58 +47,58 @@ public:
 };
 class b : public a {
 protected:
-    virtual void doFoobar(a&amp; a2); //do stuff here 
-    virtual void doFoobar(b&amp; b2); //do stuff here
-    virtual void doFoobar(c&amp; c2); //delegate to c
+    virtual void doFoobar(a& a2); //do stuff here 
+    virtual void doFoobar(b& b2); //do stuff here
+    virtual void doFoobar(c& c2); //delegate to c
 public:
-    virtual void foobar(a&amp; a2) {
+    virtual void foobar(a& a2) {
         a2.doFoobar(*this);
     }
     friend class a;
 };
 class c : public b {
 protected:
-    virtual void doFoobar(a&amp; a2); //do stuff here 
-    virtual void doFoobar(b&amp; b2); //do stuff here
-    virtual void doFoobar(c&amp; c2); //delegate to c
+    virtual void doFoobar(a& a2); //do stuff here 
+    virtual void doFoobar(b& b2); //do stuff here
+    virtual void doFoobar(c& c2); //delegate to c
 public:
-    virtual void foobar(a&amp; a2) {
+    virtual void foobar(a& a2) {
         a2.doFoobar(*this);
     }
     friend class a;
     friend class b;
 };
 //class a
-void a::doFoobar(a&amp; a2)  {
-    printf(&quot;Doing a&lt;-&gt;a\n&quot;);
+void a::doFoobar(a& a2)  {
+    printf("Doing a<->a\n");
 }
-void a::doFoobar(b&amp; b2)  {
+void a::doFoobar(b& b2)  {
     b2.doFoobar(*this);
 }
-void a::doFoobar(c&amp; c2)  {
+void a::doFoobar(c& c2)  {
     c2.doFoobar(*this);
 }
 //class b
-void b::doFoobar(a&amp; a2)  {
-    printf(&quot;Doing b&lt;-&gt;a\n&quot;);
+void b::doFoobar(a& a2)  {
+    printf("Doing b<->a\n");
 }
-void b::doFoobar(b&amp; b2)  {
-    printf(&quot;Doing b&lt;-&gt;b\n&quot;);
+void b::doFoobar(b& b2)  {
+    printf("Doing b<->b\n");
 }
-void b::doFoobar(c&amp; c2)  {
+void b::doFoobar(c& c2)  {
     c2.doFoobar(*this);
 }
 //class c
-void c::doFoobar(a&amp; a2)  {
-    printf(&quot;Doing c&lt;-&gt;a\n&quot;);
+void c::doFoobar(a& a2)  {
+    printf("Doing c<->a\n");
 }
-void c::doFoobar(b&amp; b2)  {
-    printf(&quot;Doing c&lt;-&gt;b\n&quot;);
+void c::doFoobar(b& b2)  {
+    printf("Doing c<->b\n");
 }
-void c::doFoobar(c&amp; c2)  {
-    printf(&quot;Doing c&lt;-&gt;c\n&quot;);
+void c::doFoobar(c& c2)  {
+    printf("Doing c<->c\n");
 }
-[/code]
+{% endhighlight %}
 </div>
 The code is far from an ideal double dispatch solution as it relies on the forward declaration trick to resolve the circular dependency between the subclasses. This means that all the classes that need to have this functionality must be known at compile-time (of the base class). This means the base class cannot be made into a library component.
 

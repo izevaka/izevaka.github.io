@@ -33,7 +33,7 @@ So my goal here is just simply write the unit tests and see where it takes me. I
 
 I never invisaged this to become a full blown article, but now that I am here, lets introduce some numbers to make this more scientific. I will be using Microsoft Team Studio Analysis Tools throughout the process. Here is a snapshot of what the class looks like at the start:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/start.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/start.png" alt="" title="start" width="808" height="173" class="alignnone size-full wp-image-284" /></a>
+<a href="{{ site.url }}/images/2010/02/start.png"><img src="{{ site.url }}/images/2010/02/start.png" alt="" title="start" width="808" height="173" class="alignnone size-full wp-image-284" /></a>
 
 As you can see the `Build` method is too big - 250 lines. This is bad. It's one of those `DoIt` methods that does everything.
 
@@ -48,7 +48,7 @@ Now refactoring that into a method is not a problem, the problem is isolating th
 This is what it looks like now:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 class Builder {
    public DoStuff(string blah){
       //impl
@@ -57,22 +57,22 @@ class Builder {
 
 class GridBuilder : Builder{
    public void Build() {
-      var elem = Element.GetAttribute(&quot;Blah&quot;);
+      var elem = Element.GetAttribute("Blah");
 	  DoStuff(blah);
    }
 }
-[/code]
+{% endhighlight %}
 </div>
 
 Let's tweak it as described in the previous paragraph:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 interface IBuilder {
 	DoStuff(string blah);
 }
 
-[code lang=&quot;csharp&quot;]
+[code lang="csharp"]
 class Builder : IBuilder {
    [Obsolete]
    public DoStuff(string blah){
@@ -93,11 +93,11 @@ class GridBuilder {
 	}
    
    public void Build() {
-      var elem = Element.GetAttribute(&quot;Blah&quot;);
+      var elem = Element.GetAttribute("Blah");
 	  _Builder = DoStuff(blah);
    }
 }
-[/code]
+{% endhighlight %}
 </div>
 
 So what I have done is put that `DoStuff` into an interface and marked the implementation as Obolete. This is more out of convinience to get the compiler to show me where else this method is being used. Turns out this was the only case where it was used in `GridBuilder`. I could have just as well used text search, but hey, if there is a fancy compiler feature, why not use it? Notice that I also added a dependency constructor so I can compose `GridBuilder` in a unit test.
@@ -115,48 +115,48 @@ So, after a long time setting up `GridBuilder`'s dependencies I am finally here 
 
 Code metrics:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/step1.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/step1.png" alt="" title="step1" width="954" height="210" class="alignnone size-full wp-image-286" /></a>
+<a href="{{ site.url }}/images/2010/02/step1.png"><img src="{{ site.url }}/images/2010/02/step1.png" alt="" title="step1" width="954" height="210" class="alignnone size-full wp-image-286" /></a>
 
 So I didn't get anywhere as far as most metrics are concerned, in fact I almost went backwards, if anything. Let's keep going. So now I have a unit test that runs the `Build` method lets keep trying to test more and more parts of it.
 
 Before I go on, I would like to emphasize the fact that I had to create lots of mocks and pass in lots of dependencies just to make one method not crash. Here is the unit test. Definitely too much for ONE method:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 
 		[SetUp]
 		public void Setup() {
 			m_Mocks = new Mockery();
 			m_Settings = new InlineBuilderSettings {
-				Compiler = m_Mocks.NewMock&lt;IWebCompiler&gt;(),
-				ComponentName = &quot;Test&quot;
+				Compiler = m_Mocks.NewMock<IWebCompiler>(),
+				ComponentName = "Test"
 			};
 			//Used by setup method
-			Stub.On(m_Settings.Compiler).GetProperty(&quot;ServerCompiler&quot;).Will(Return.Value(null));
-			Stub.On(m_Settings.Compiler).GetProperty(&quot;ServerType&quot;).Will(Return.Value(typeof(Data.ServerAplication)));
+			Stub.On(m_Settings.Compiler).GetProperty("ServerCompiler").Will(Return.Value(null));
+			Stub.On(m_Settings.Compiler).GetProperty("ServerType").Will(Return.Value(typeof(Data.ServerAplication)));
 		}
 		
 		[Test]
 		public void BuildShouldCallRequireComponentWhenViewAttribute() {
 
-			var iClientBuilder = m_Mocks.NewMock&lt;IClientBuilder&gt;();
-			var iBuilder = m_Mocks.NewMock&lt;IWebBuilder&gt;();
+			var iClientBuilder = m_Mocks.NewMock<IClientBuilder>();
+			var iBuilder = m_Mocks.NewMock<IWebBuilder>();
 
 			Builder builder = new Builder(iClientBuilder, iBuilder);
 			m_Settings.Element = 
-				new XElement(&quot;Grid&quot;, new XAttribute(&quot;View&quot;, &quot;test&quot;), 
-					new XElement(&quot;Source&quot;, new XAttribute(&quot;View&quot;, &quot;DataTest&quot;)),
-					new XElement(&quot;Fields&quot;));
+				new XElement("Grid", new XAttribute("View", "test"), 
+					new XElement("Source", new XAttribute("View", "DataTest")),
+					new XElement("Fields"));
 
-			Expect.Once.On(iClientBuilder).Method(&quot;RequireComponent&quot;).With(&quot;test&quot;, m_Settings.Element).Will();
-			Stub.On(iClientBuilder).Method(&quot;GetComponentInfo&quot;).Will(Return.Value(new ComponentInfo()));
-			Stub.On(iBuilder).Method(&quot;AddConfig&quot;).Will();
-			Stub.On(m_Settings.Compiler).Method(&quot;AddInclude&quot;).Will();
+			Expect.Once.On(iClientBuilder).Method("RequireComponent").With("test", m_Settings.Element).Will();
+			Stub.On(iClientBuilder).Method("GetComponentInfo").Will(Return.Value(new ComponentInfo()));
+			Stub.On(iBuilder).Method("AddConfig").Will();
+			Stub.On(m_Settings.Compiler).Method("AddInclude").Will();
 			
 			builder.Setup(m_Settings);
 			builder.Build();
 		}
-[/code]
+{% endhighlight %}
 </div>
 
 Realistically, in order to complete the build process we need all those dependencies. That's pretty fundamental. However, it should be possible to reduce the amount of dependencies ONE method has. 
@@ -164,11 +164,11 @@ Realistically, in order to complete the build process we need all those dependen
 ###Next refactor
 My next target was a reasonably self contained code block that I did "Extract Method" method on. Two more unit tests. Slight improvement in maintainability and complexity.
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/step2.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/step2.png" alt="" title="step2" width="996" height="236" class="alignnone size-full wp-image-287" /></a>
+<a href="{{ site.url }}/images/2010/02/step2.png"><img src="{{ site.url }}/images/2010/02/step2.png" alt="" title="step2" width="996" height="236" class="alignnone size-full wp-image-287" /></a>
 
 Next one is a big sucker. This block produces about 5 output objects that are dumped to JSON later on. I actually moved to another two classes. One to perform the build and another to store the output.
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/step3.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/step3.png" alt="" title="step3" width="896" height="236" class="alignnone size-full wp-image-288" /></a>
+<a href="{{ site.url }}/images/2010/02/step3.png"><img src="{{ site.url }}/images/2010/02/step3.png" alt="" title="step3" width="896" height="236" class="alignnone size-full wp-image-288" /></a>
 
 Good improvement on all counts. Lets keep splitting the Build method and writing tests for it. As I am doing this I decided to make the GridBuilder a namespace within a project. There are a number of classes in it by now, might as well contain them in a folder.
 
@@ -177,7 +177,7 @@ I have somewhat abandoned refactoring GridBuilder as I found a whole bunch of ot
 
 This is what the class looked like once I finished with it:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/step4.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/02/step4.png" alt="" title="step4" width="975" height="230" class="alignnone size-full wp-image-289" /></a>
+<a href="{{ site.url }}/images/2010/02/step4.png"><img src="{{ site.url }}/images/2010/02/step4.png" alt="" title="step4" width="975" height="230" class="alignnone size-full wp-image-289" /></a>
 
 Now that I ran out of time that I gave myself for this task I think I have a few notes for future.
 

@@ -34,4 +34,4 @@ Hmmmm.....
 
 Still going with the "sing" comparision, the corresponding noun is "song". So, in bing's case it would be "bong". That makes sense, you sing a song, so when you bing, you are binging the bong. They should rename "Search results" to "Bong" like so:
 
-<img src="http://www.somethingorothersoft.com/wp-content/uploads/2009/07/bingbongsmall.png" alt="bingbongsmall" title="bingbongsmall" width="440" height="511" class="alignleft size-full wp-image-30" />
+<img src="{{ site.url }}/images/2009/07/bingbongsmall.png" alt="bingbongsmall" title="bingbongsmall" width="440" height="511" class="alignleft size-full wp-image-30" />

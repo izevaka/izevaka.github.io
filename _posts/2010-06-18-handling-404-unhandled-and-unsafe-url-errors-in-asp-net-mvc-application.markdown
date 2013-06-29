@@ -32,17 +32,17 @@ There is a catch, however. If the anti-XSS features kick in and disallow a URL c
 The best solution i found was to catch the exception when doing `Execute` and do a browser redirect then. This prevents the runtime from creating a YSOD due to an unhandled exception in the exception event.
 
 <div>
-[code lang="csharp"]
-IController errorController = ControllerBuilder.Current.GetControllerFactory().CreateController(null, &quot;error&quot;);
+{% highlight csharp %}
+IController errorController = ControllerBuilder.Current.GetControllerFactory().CreateController(null, "error");
 try {
 	errorController.Execute(new RequestContext(
 			contextBase, errorRoute));
 } catch(Exception) {
 	//If we are here it means that the URL is unsafe and the only way to handle it gracefully is to redirect.
-	Response.Redirect(&quot;~/Error/BadRequest&quot;); //Controller/View pair that returns 400 - Bad Request
+	Response.Redirect("~/Error/BadRequest"); //Controller/View pair that returns 400 - Bad Request
 }
 
-[/code]
+{% endhighlight %}
 </div>
 
 It's probably not the best idea to handle 400 error as 404, hence we redirect to a "BadRequest" action in the `ErrorController`.

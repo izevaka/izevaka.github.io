@@ -30,10 +30,10 @@ The default out of the box setup for doing the above is not too tricky, however 
 
 Once your solution has at least one MS Test project, there will be a *.testsettings* file created. Double click it and go to *Data And Diagnostics > Code Coverage(Check Enable) > Configure*. Select your projects and you are good to go.
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/10/codecoverage.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/10/codecoverage.png" alt="" title="codecoverage" width="673" height="614" class="alignnone size-full wp-image-461" /></a>
+<a href="{{ site.url }}/images/2010/10/codecoverage.png"><img src="{{ site.url }}/images/2010/10/codecoverage.png" alt="" title="codecoverage" width="673" height="614" class="alignnone size-full wp-image-461" /></a>
 
 Once that is done, every time a test is run, code coverage data will be collected. To show the results, simply click the *Show Code Coverage Results* button in the *Test Results* window.
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/10/showcodecoverage.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/10/showcodecoverage.png" alt="" title="showcodecoverage" width="437" height="141" class="alignnone size-full wp-image-464" /></a>
+<a href="{{ site.url }}/images/2010/10/showcodecoverage.png"><img src="{{ site.url }}/images/2010/10/showcodecoverage.png" alt="" title="showcodecoverage" width="437" height="141" class="alignnone size-full wp-image-464" /></a>
 
 ###Coverage for ASP.NET MVC projects
 **Problem:** ASP .NET projects cause a test run error that looks this:
@@ -43,7 +43,7 @@ Once that is done, every time a test is run, code coverage data will be collecte
 The problem, as I understand it, is to do with misconfigured Development Web Server (Cassini) that does not properly expose a helper handler for profiler to collect code coverage data. Not ever having used ASP .NET MVC specific features in MS Test (like `[UrlToTestAttribute]`), I simply removed all those attributes and removed that project from test coverage.
 
 Next, in order to collect code coverage I simply added the MVC project DLL and the problem went away. By default, code coverage does special handling for MVC projects to instrument them as websites (which also causes the web server to start up and slow down the test run). If you then add the MVC project's DLL, it'll run with no issues.
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/10/mvccoverage.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/10/mvccoverage.png" alt="" title="mvccoverage" width="520" height="634" class="aligncenter size-full wp-image-466" /></a>
+<a href="{{ site.url }}/images/2010/10/mvccoverage.png"><img src="{{ site.url }}/images/2010/10/mvccoverage.png" alt="" title="mvccoverage" width="520" height="634" class="aligncenter size-full wp-image-466" /></a>
 
 ###SpecFlow features
 **Problem:** SpecFlow features with non-implemented steps fail build.
@@ -62,18 +62,18 @@ There are a number of solutions that I have profiled before settling on adding `
 In Order to get SpecFlow unit test generator to spit out attributes, you will need to edit `specflow.exe.config` to look like this:
 
 <div>
-[code lang="xml"]
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-&lt;configuration&gt;
-  &lt;configSections&gt;
-    &lt;section name=&quot;specFlow&quot; type=&quot;TechTalk.SpecFlow.Configuration.ConfigurationSectionHandler, TechTalk.SpecFlow&quot;/&gt;
-  &lt;/configSections&gt;
+{% highlight xml %}
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="specFlow" type="TechTalk.SpecFlow.Configuration.ConfigurationSectionHandler, TechTalk.SpecFlow"/>
+  </configSections>
 
-  &lt;specFlow&gt;
-    &lt;unitTestProvider name=&quot;MsTest.2010&quot; /&gt;
-  &lt;/specFlow&gt;
-&lt;/configuration&gt;
-[/code]
+  <specFlow>
+    <unitTestProvider name="MsTest.2010" />
+  </specFlow>
+</configuration>
+{% endhighlight %}
 </div> 
 
 ###In conclusion

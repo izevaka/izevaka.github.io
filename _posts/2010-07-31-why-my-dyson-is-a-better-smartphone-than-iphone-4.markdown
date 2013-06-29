@@ -22,7 +22,7 @@ So, as part of my training, I have been running to the gym in Saturdays sometime
 
 The reason I wanted one of these is because two giant border collies make the carpet in our house gets real hairy real fast.
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/07/PB100173.jpg"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/07/PB100173.jpg" alt="" title="PB100173" width="270" height="360" class="alignnone size-full wp-image-423" /></a><a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/07/20081031_0376.jpg"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/07/20081031_0376.jpg" alt="" title="20081031_0376" width="240" height="360" class="alignnone size-full wp-image-422" /></a>
+<a href="{{ site.url }}/images/2010/07/PB100173.jpg"><img src="{{ site.url }}/images/2010/07/PB100173.jpg" alt="" title="PB100173" width="270" height="360" class="alignnone size-full wp-image-423" /></a><a href="{{ site.url }}/images/2010/07/20081031_0376.jpg"><img src="{{ site.url }}/images/2010/07/20081031_0376.jpg" alt="" title="20081031_0376" width="240" height="360" class="alignnone size-full wp-image-422" /></a>
 
 The store had the vacuum attachment that I was after but it was a lot bigger than i anticipated. I thought it would fit into my backpack, but it was at least twice the size of it. So I ran back home carrying it in my hands. I must have looked ridiculous :) but I got there in the end.
 

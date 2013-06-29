@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Fetching GitHub Pull Requests With Git
+title: UPDATED Fetching GitHub Pull Requests With Git
 tags:
 - Development
 - git
@@ -33,11 +33,11 @@ There is some criticism that GitHub should accept here and that's poor advertisi
 
 When you use the 50 character one-line, followed by detailed description with hard line breaks at ~70 character mark AND that commit is at the tip of the branch at the time of making PR, magic happens. The Pull Request title and description come from one-line and detailed description respectively:
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2012/05/commit-one-line-detail1.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2012/05/commit-one-line-detail1.png" alt="" title="commit-one-line-detail"  class="alignnone size-full wp-image-584" /></a>
+<a href="{{ site.url }}/images/2012/05/commit-one-line-detail1.png"><img src="{{ site.url }}/images/2012/05/commit-one-line-detail1.png" alt="" title="commit-one-line-detail"  class="alignnone size-full wp-image-584" /></a>
 
 To read more about recommended commit format check out [Commit Guidelines](http://git-scm.com/book/ch5-2.html#Commit-Guidelines) in the Git Book. Also did you know that by default, vi, the editor configured for git, will help you with creating kosher commit messages when you simply type `git commit`?
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2012/05/commit-vi.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2012/05/commit-vi.png" alt="" title="commit-vi" width="518" height="208" class="alignnone size-full wp-image-603" /></a>
+<a href="{{ site.url }}/images/2012/05/commit-vi.png"><img src="{{ site.url }}/images/2012/05/commit-vi.png" alt="" title="commit-vi" width="518" height="208" class="alignnone size-full wp-image-603" /></a>
 
 ###...push more commits to a branch that I've submitted a Pull Request from?
 To be fair, PR doco does say that the commits are added to the request, which is cool. How does GitHub decide whether or not the PR tracks new commits made in your fork? My assumption is that branches are tracked, whereas tags and commit SHA1s aren't.
@@ -45,7 +45,7 @@ To be fair, PR doco does say that the commits are added to the request, which is
 ###...make a Pull Request Based on a Tag/Commit?
 Pull Request UI looks like this, and to tell the truth, I find a single line that says "Head branch · tag · commit" a little confusing. "Head branch" that PR tracks whatever is in that branch. "Tag" and "Commit" just means a single commit.
 
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2012/05/Screen-shot-2012-05-21-at-5.37.24-PM.png"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2012/05/Screen-shot-2012-05-21-at-5.37.24-PM.png" alt="" title="Screen shot 2012-05-21 at 5.37.24 PM" width="461" height="196" class="alignnone size-full wp-image-572" /></a>
+<a href="{{ site.url }}/images/2012/05/Screen-shot-2012-05-21-at-5.37.24-PM.png"><img src="{{ site.url }}/images/2012/05/Screen-shot-2012-05-21-at-5.37.24-PM.png" alt="" title="Screen shot 2012-05-21 at 5.37.24 PM" width="461" height="196" class="alignnone size-full wp-image-572" /></a>
 
 ###...rebase and force push to the branch that has an outstanding Pull Request?
 This one I haven't tried, but have on good authority that what happens is exactly what you want to happen - i.e. the Pull Request contain commits that are different between the two branches. Example (lets assume commits B and C were made after the pull request was made):

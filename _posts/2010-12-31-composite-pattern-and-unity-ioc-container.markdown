@@ -43,7 +43,7 @@ This means that you can register the composite class without a name and implemen
 
 So, here is the base controller: 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 public class BaseController : Controller
 {
     private readonly IAuthorizationPolicy _Policy;
@@ -56,33 +56,33 @@ public class BaseController : Controller
     {
         // Check if this action has NotAuthorizeAttribute
         object[] attributes = filterContext.ActionDescriptor.GetCustomAttributes(true);
-        if (attributes.Any(a =&gt; a is NotAuthorizeAttribute)) return;
+        if (attributes.Any(a => a is NotAuthorizeAttribute)) return;
 
         filterContext.Result = _Policy.Execute(filterContext);
     }
 }
-[/code]
+{% endhighlight %}
 </div>
 
 Below is the composite class. Note that it takes a constructor parameter of an array of mappings of implementation interface registration to the order in which it should be executed. This allows fine tuning the order in which the policies are executed. Note the near textbook following of SRP, where the logic of executing multiple policies and ordering of invocations is kept out of the controller class. The reason for this collection being an array of key value pairs as opposed to a dictionary is for ease of configuration through XML configuration.
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 	public interface IAuthorizationPolicy {
 		ActionResult Execute(AuthorizationContext context);
 	}
 
 	public class AuthorizationPolicyComposite : IAuthorizationPolicy{
 		
-		private KeyValuePair&lt;int, string&gt;[] _NameList;
-		private IEnumerable&lt;IRequestPolicy&gt; _Policies;
+		private KeyValuePair<int, string>[] _NameList;
+		private IEnumerable<IRequestPolicy> _Policies;
 
-		/// &lt;summary&gt;
+		/// <summary>
 		/// Creates AuthorizationPolicyComposite class.
-		/// &lt;/summary&gt;
-		/// &lt;param name=&quot;dictionary&quot;&gt;priority list of container registration names. E.g. {1,&quot;policy1&quot;} will use the container 
-		/// to resolve an instance of &lt;see cref=&quot;IAuthorizationPolicy&quot;/&gt; using &quot;policy1&quot; name and will put that instance in the order specified by the integer.&lt;/param&gt;
-		public AuthorizationPolicyComposite(KeyValuePair&lt;string, int&gt;[] dictionary) {
+		/// </summary>
+		/// <param name="dictionary">priority list of container registration names. E.g. {1,"policy1"} will use the container 
+		/// to resolve an instance of <see cref="IAuthorizationPolicy"/> using "policy1" name and will put that instance in the order specified by the integer.</param>
+		public AuthorizationPolicyComposite(KeyValuePair<string, int>[] dictionary) {
 			// TODO: Complete member initialization
 			this._NameList = dictionary;
 
@@ -91,8 +91,8 @@ Below is the composite class. Note that it takes a constructor parameter of an a
 
 		private void InitComposite() {
 			_Policies = _NameList
-				.OrderBy(item =&gt; item.Value) //sort on order number
-				.Select(item =&gt; _Container.Resolve&lt;IAuthorizationPolicy&gt;(item.Key));
+				.OrderBy(item => item.Value) //sort on order number
+				.Select(item => _Container.Resolve<IAuthorizationPolicy>(item.Key));
 		}
 
 		#region IRequestPolicy Members
@@ -106,25 +106,25 @@ Below is the composite class. Note that it takes a constructor parameter of an a
 			return null;
 		}
 	}
-[/code]
+{% endhighlight %}
 </div>
 
 The registrations for all of these can be done as follows:
 
 <div>
-[code lang="csharp"]
+{% highlight csharp %}
 private void InitContainer(IUnityContainer container) {
 	//composite regisrtation
-	container.RegisterType&lt;IAuthorizationPolicy, AuthorizationPolicyComposite&gt;(new Dictionary&lt;string,int&gt; {
-		{&quot;normal&quot;, 1},
-		{&quot;activation&quot;, 2},
+	container.RegisterType<IAuthorizationPolicy, AuthorizationPolicyComposite>(new Dictionary<string,int> {
+		{"normal", 1},
+		{"activation", 2},
 	}.ToArray());
 	//normal authorization policy
-	container.RegisterType&lt;IAuthorizationPolicy, NormalAuthorizationPolicy&gt;(&quot;normal&quot;);
+	container.RegisterType<IAuthorizationPolicy, NormalAuthorizationPolicy>("normal");
 	//User activation authorization policy - i.e. a user must go through activation process on first login
-	container.RegisterType&lt;IAuthorizationPolicy, UserActivationAuthorizationPolicy&gt;(&quot;activation&quot;);
+	container.RegisterType<IAuthorizationPolicy, UserActivationAuthorizationPolicy>("activation");
 }
-[/code]
+{% endhighlight %}
 </div>
 
 That's it. The configuration for XML is not included here as it is pretty much the same as the API version. There is a trick to get the `KeyValuePair`s to work using a converter, but that's a topic for another post.

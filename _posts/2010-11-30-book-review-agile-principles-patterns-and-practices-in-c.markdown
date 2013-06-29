@@ -22,7 +22,7 @@ meta:
   _edit_last: '1'
   _wp_old_slug: ''
 ---
-<a href="http://www.somethingorothersoft.com/wp-content/uploads/2010/11/agile-c.jpg"><img src="http://www.somethingorothersoft.com/wp-content/uploads/2010/11/agile-c.jpg" alt="" title="agile c#" width="372" height="500" class="alignnone size-full wp-image-477" /></a>
+<a href="{{ site.url }}/images/2010/11/agile-c.jpg"><img src="{{ site.url }}/images/2010/11/agile-c.jpg" alt="" title="agile c#" width="372" height="500" class="alignnone size-full wp-image-477" /></a>
 
 Bob C. Martin's *Agile Principles, Patterns, and Practices in C#" has to be the most readable and enjoyable computer text ever written. Having created production object orientated code for years, seeing ways to do OO properly is eye opening. Reflecting back, I realise that a lot of that "OO" code is actually procedural code written using OO tools.
 
