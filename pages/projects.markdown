@@ -1,10 +1,11 @@
 ---
-layout: default
+layout: page
 title: Projects
 tags: []
 status: publish
 type: page
 published: true
+group: meta
 meta:
   _jd_post_meta_fixed: 'true'
   _edit_last: '1'

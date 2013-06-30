@@ -1,10 +1,11 @@
 ---
-layout: default
+layout: page
 title: ChattR
 tags: []
 status: publish
 type: page
 published: true
+group: meta
 meta:
   _jd_wp_twitter: ''
   _wp_jd_target: ''

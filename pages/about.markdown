@@ -1,10 +1,11 @@
 ---
-layout: default
+layout: page
 title: About Me
 tags: []
 status: publish
 type: page
 published: true
+group: meta
 meta:
   _edit_last: '1'
   _wp_page_template: default

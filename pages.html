@@ -6,8 +6,15 @@ group: navigation
 ---
 {% include JB/setup %}
 
-<h2>All Pages</h2>
+<h2>Meta</h2>
 <ul>
 {% assign pages_list = site.pages %}
+{% assign group = 'meta' %}
+{% include JB/pages_list %}
+</ul>
+<h2>Navigation</h2>
+<ul>
+{% assign pages_list = site.pages %}
+{% assign group = 'navigation' %}
 {% include JB/pages_list %}
 </ul>
