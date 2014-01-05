@@ -403,3 +403,8 @@ div.sidebar section img.icon {
   -o-border-radius: 5px;
   border-radius: 5px;
 }
+
+/*HACK - didn't bother to figure out how to make compass work */
+.content img {
+    margin: 5px;
+}
